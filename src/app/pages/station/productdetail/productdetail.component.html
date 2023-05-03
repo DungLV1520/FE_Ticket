@@ -1,0 +1,154 @@
+<div class="container-fluid">
+  <!-- start page title -->
+  <app-page-title
+    title="Station Detail"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-page-title>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-6">
+              <div class="product-detai-imgs">
+                <div class="row">
+                  <ul
+                    ngbNav
+                    #nav="ngbNav"
+                    class="col-md-2 col-sm-3 col-4"
+                    orientation="vertical"
+                  >
+                    <li
+                      *ngFor="
+                        let myproduct of productDetail[0].images;
+                        let i = index
+                      "
+                      [ngbNavItem]="i"
+                      class="p-2"
+                    >
+                      <a ngbNavLink>
+                        <img
+                          src="{{ myproduct }}"
+                          alt=""
+                          class="img-fluid mx-auto d-block rounded"
+                        />
+                      </a>
+                      <ng-template ngbNavContent>
+                        <img
+                          src="{{ myproduct }}"
+                          id="expandedImg"
+                          alt=""
+                          class="img-fluid mx-auto d-block"
+                        />
+                      </ng-template>
+                    </li>
+                  </ul>
+                  <div
+                    [ngbNavOutlet]="nav"
+                    class="col-md-7 offset-md-1 col-sm-9 col-8"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-6">
+              <div class="mt-4 mt-xl-3">
+                <a href="javascript: void(0);" class="text-primary">{{
+                  productDetail[0].category
+                }}</a>
+                <h4 class="mt-1 mb-3">{{ productDetail[0].name }}</h4>
+
+                <p class="text-muted float-left me-3">
+                  <span class="bx bx-star text-warning"></span>
+                  <span class="bx bx-star text-warning"></span>
+                  <span class="bx bx-star text-warning"></span>
+                  <span class="bx bx-star text-warning"></span>
+                  <span class="bx bx-star"></span>
+                </p>
+                <p class="text-muted mb-4">
+                  ( {{ productDetail[0].reviewCount }} Customers Review )
+                </p>
+
+                <h6 class="text-success text-uppercase">
+                  {{ productDetail[0].discount }} % Off
+                </h6>
+                <h5 class="mb-4">
+                  Price :
+                  <span class="text-muted me-2"
+                    ><del>${{ productDetail[0].oriRate }} USD</del></span
+                  >
+                  <b>${{ productDetail[0].disRate }} USD</b>
+                </h5>
+                <p class="text-muted mb-4">
+                  To achieve this, it would be necessary to have uniform grammar
+                  pronunciation and more common words If several languages
+                  coalesce
+                </p>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div *ngFor="let i of productDetail[0].feature">
+                      <p class="text-muted">
+                        <i
+                          class="bx bx-caret-right font-size-16 align-middle text-primary mr-1"
+                        ></i>
+                        {{ i }}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div *ngFor="let i of productDetail[0].feature">
+                      <p class="text-muted">
+                        <i
+                          class="bx bx-caret-right font-size-16 align-middle text-primary mr-1"
+                        ></i>
+                        {{ i }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="product-color">
+                  <h5 class="font-size-15">Color :</h5>
+                  <a
+                    href="javascript: void(0);"
+                    class="active"
+                    *ngFor="let i of productDetail[0].colorVariant"
+                  >
+                    <div class="product-color-item border rounded">
+                      <img src="{{ i.value }}" alt="" class="avatar-md" />
+                    </div>
+                    <p>{{ i.key }}</p>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end row -->
+
+          <div class="mt-5">
+            <h5 class="mb-3">Specifications :</h5>
+
+            <div class="table-responsive">
+              <table class="table mb-0 table-bordered">
+                <tbody>
+                  <tr *ngFor="let i of productDetail[0].specification">
+                    <th scope="row" style="width: 400px">{{ i.key }}</th>
+                    <td>{{ i.value }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- end Specifications -->
+        </div>
+      </div>
+    </div>
+
+    <!-- end card -->
+  </div>
+  <!-- end row -->
+
+  <!-- end row -->
+</div>
+<!-- container-fluid -->

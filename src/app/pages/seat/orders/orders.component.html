@@ -1,0 +1,111 @@
+<app-loader *ngIf="loading"></app-loader>
+<div class="container-fluid" style="position: relative">
+  <app-page-title
+    title="Seat"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-page-title>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <form [formGroup]="formSearch" (ngSubmit)="searchSeat()">
+            <div class="row">
+              <div class="col-3">
+                <div class="mb-0">
+                  <label style="margin-top: 13px"></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search..."
+                    formControlName="type"
+                    style="position: relative"
+                  />
+                  <i
+                    class="bx bx-search-alt search-icon"
+                    style="position: absolute; top: 63%; right: 11%"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="col-xl col-sm-4 align-self-end">
+                <div class="mt-3">
+                  <button type="submit" class="btn btn-primary w-md">
+                    Search
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <ng-template [ngTemplateOutlet]="TaskContent"></ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #TaskContent>
+  <div class="row mb-md-2 mt-4"></div>
+  <table id="basic-datatable" class="table dt-responsive nowrap">
+    <thead>
+      <tr>
+        <th>Seat</th>
+        <th>Vehicle</th>
+        <th>Type</th>
+        <th>CreatedAt</th>
+        <th>UpdatedAt</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let table of customersData">
+        <td>
+          <ngb-highlight [result]="table.sku"> </ngb-highlight>
+        </td>
+
+        <td>
+          <ngb-highlight
+            [result]="
+              table.vehicle?.name
+                ? table.vehicle?.name
+                : checkVehi(table.vehicle)
+            "
+          >
+          </ngb-highlight>
+        </td>
+        <td>
+          <ngb-highlight [result]="table.type"></ngb-highlight>
+        </td>
+        <td>
+          <ngb-highlight
+            [result]="table.createdAt | date : 'dd MMM, YYYY'"
+          ></ngb-highlight>
+        </td>
+        <td>
+          <ngb-highlight
+            [result]="table.updatedAt | date : 'dd MMM, YYYY'"
+          ></ngb-highlight>
+        </td>
+        <td>
+          <ngb-highlight
+            [result]="table.status ? 'Booked' : 'Empty'"
+            class="badge font-size-10"
+            [ngClass]="{
+              'bg-success': table.status === true,
+              'bg-danger': table.status === false
+            }"
+          ></ngb-highlight>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ngb-pagination
+    [collectionSize]="totalPage"
+    [pageSize]="10"
+    [(page)]="currentpage"
+    (pageChange)="getPageSeat($event)"
+    class="pagination pagination-rounded justify-content-end mb-2"
+    aria-label="Default pagination"
+  >
+  </ngb-pagination>
+</ng-template>

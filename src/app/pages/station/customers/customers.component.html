@@ -1,0 +1,247 @@
+<app-loader *ngIf="loading"></app-loader>
+<div class="container-fluid" style="position: relative">
+  <app-page-title
+    title="Station"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <form [formGroup]="formSearch">
+                  <div class="position-relative">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Search..."
+                      formControlName="value"
+                      (keyup)="searchStation()"
+                    />
+                    <i class="bx bx-search-alt search-icon"></i>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-end">
+                <button
+                  type="button"
+                  class="btn btn-success btn-rounded mb-2 mr-2"
+                  (click)="openModal(content, false)"
+                >
+                  <i class="mdi mdi-plus me-1"></i> New Station
+                </button>
+              </div>
+            </div>
+            <!-- end col-->
+          </div>
+          <div class="table-responsive un-overflow">
+            <table class="table align-middle table-nowrap">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th>Company</th>
+                  <th>Received at</th>
+                  <th>Modified at</th>
+                  <th style="text-align: center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let customers of customersData; let i = index">
+                  <td>
+                    <div class="form-check font-size-16">
+                      <input
+                        id="customCheck{{ i }}"
+                        type="checkbox"
+                        class="form-check-input"
+                      />
+                      <label class="form-check-label" for="customCheck{{ i }}"
+                        >&nbsp;</label
+                      >
+                    </div>
+                  </td>
+                  <td>{{ customers.name }}</td>
+                  <td>
+                    <p class="mb-1">{{ customers.address }}</p>
+                  </td>
+                  <td>
+                    <div *ngFor="let item of customers.company">
+                      <p class="badge bg-success mb-1">{{ item.name }}</p>
+                    </div>
+                  </td>
+                  <td>{{ customers.createdAt | date : "dd MMM, YYYY" }}</td>
+                  <td>{{ customers.updatedAt | date : "dd MMM, YYYY" }}</td>
+                  <td style="text-align: center">
+                    <div class="dropdown" ngbDropdown placement="bottom-right">
+                      <a
+                        href="javascript: void(0);"
+                        class="dropdown-toggle card-drop"
+                        data-toggle="dropdown"
+                        ngbDropdownToggle
+                        aria-expanded="false"
+                      >
+                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                      </a>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        ngbDropdownMenu
+                      >
+                        <li>
+                          <a
+                            (click)="openModal(content, true, customers)"
+                            class="dropdown-item"
+                            ><i class="fas fa-pencil-alt text-success me-1"></i>
+                            Edit</a
+                          >
+                        </li>
+                        <li>
+                          <a
+                            (click)="
+                              openModalDelete(contentdelete, customers._id)
+                            "
+                            class="dropdown-item"
+                            ><i class="fas fa-trash-alt text-danger me-1"></i>
+                            Delete</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- pagination -->
+          <ngb-pagination
+            [collectionSize]="totalPage"
+            [pageSize]="10"
+            [(page)]="currentpage"
+            (pageChange)="getPageStation($event)"
+            class="pagination pagination-rounded justify-content-end mb-2"
+            aria-label="Default pagination"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+</div>
+
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">{{ title }}</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="saveStation()" [formGroup]="formData">
+      <div class="row">
+        <div class="col-12">
+          <div class="mb-3">
+            <label class="control-label">Name</label>
+            <input
+              class="form-control"
+              placeholder="Enter station name"
+              type="text"
+              name="title"
+              autocomplete="off"
+              formControlName="name"
+              [ngClass]="{ 'is-invalid': submitted && form.name.errors }"
+            />
+            <div *ngIf="submitted && form.name.errors" class="invalid-feedback">
+              <span *ngIf="form.name.errors.required"
+                >Station Name is required.</span
+              >
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="control-label">Company</label>
+            <ng-select
+              placeholder="Enter company"
+              [items]="comapnyItem"
+              [multiple]="true"
+              bindLabel="name"
+              bindValue="_id"
+              formControlName="company"
+              [compareWith]="compareFn"
+              [ngClass]="{ 'is-invalid': submitted && form.company.errors }"
+            ></ng-select>
+            <div
+              *ngIf="submitted && form.company.errors"
+              class="invalid-feedback"
+            >
+              <span *ngIf="form.company.errors.required"
+                >Company is required.</span
+              >
+              <span *ngIf="form.company.errors.pattern"
+                >This value should be a valid company.</span
+              >
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="control-label">Address</label>
+            <input
+              class="form-control"
+              placeholder="Enter address"
+              type="text"
+              autocomplete="off"
+              name="address"
+              formControlName="address"
+              [ngClass]="{ 'is-invalid': submitted && form.address.errors }"
+            />
+            <div
+              *ngIf="submitted && form.address.errors"
+              class="invalid-feedback"
+            >
+              <span *ngIf="form.address.errors.required"
+                >Address is required.</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success" id="btn-save-event">
+        Save
+      </button>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Standard Modal -->
+<ng-template #contentdelete role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">CONFIRMATION</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <h5>Do you really want to delete?</h5>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-light"
+      (click)="modal.close('Close click')"
+    >
+      Cancel
+    </button>
+    <button (click)="deleteStation()" type="button" class="btn btn-primary">
+      OK
+    </button>
+  </div>
+</ng-template>

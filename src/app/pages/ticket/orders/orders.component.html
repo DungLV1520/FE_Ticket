@@ -1,0 +1,244 @@
+<app-loader *ngIf="loading"></app-loader>
+<div class="container-fluid" style="position: relative">
+  <app-page-title
+    title="Ticket"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search..."
+                    [(ngModel)]="term"
+                  />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div
+                class="search-box me-2 mb-2 d-inline-block"
+                style="width: 80%"
+              >
+                <div class="position-relative">
+                  <ng-select
+                    placeholder="Enter vehicle"
+                    [items]="customerDataVehicle"
+                    bindLabel="name"
+                    bindValue="_id"
+                    (change)="guestIDVehicle($event)"
+                  ></ng-select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table data -->
+          <div class="table-responsive mb-0">
+            <table class="table table-centered table-nowrap">
+              <thead class="table-light">
+                <tr>
+                  <th class="align-middle">Name</th>
+                  <th class="align-middle">Email</th>
+                  <th class="align-middle">Amount Paid</th>
+                  <th class="align-middle">Seat Book</th>
+                  <th class="align-middle">Trip</th>
+                  <th class="align-middle">CreatedAt</th>
+                  <th class="align-middle">View Details</th>
+                  <th style="text-align: center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of customersData; let i = index">
+                  <td>
+                    <a (click)="navigateStation()" class="text-body fw-bold">{{
+                      data.user?.name
+                    }}</a>
+                  </td>
+                  <td>{{ data.user?.email }}</td>
+                  <td>{{ data.amountPaid | currency : "" : "" : "1.0" }}</td>
+                  <td>
+                    <div *ngFor="let item of data.seat">
+                      <p class="mb-1">{{ item.sku }}</p>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <p class="mb-1">{{ getProvince(data.trip?.from) }}</p>
+                      <p class="mb-1">{{ getToProvince(data.trip?.to) }}</p>
+                    </div>
+                  </td>
+                  <td>{{ data.createdAt | date : "dd MMM, YYYY" }}</td>
+                  <td>
+                    <!-- Button trigger modal -->
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-sm btn-rounded"
+                      (click)="openModal(content, data)"
+                    >
+                      View Details
+                    </button>
+                  </td>
+                  <td style="text-align: center">
+                    <div class="dropdown" ngbDropdown placement="bottom-right">
+                      <a
+                        href="javascript: void(0);"
+                        class="dropdown-toggle card-drop"
+                        data-toggle="dropdown"
+                        ngbDropdownToggle
+                        aria-expanded="false"
+                      >
+                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                      </a>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        ngbDropdownMenu
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            (click)="openModalDelete(contentdelete, data._id)"
+                            ><i class="fas fa-trash-alt text-danger me-1"></i>
+                            Delete</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <ng-template #content role="document" let-modal>
+              <div class="modal-header">
+                <h5 class="modal-title mt-0">Ticket Details</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  aria-hidden="true"
+                  (click)="modal.dismiss('Cross click')"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  Ticket id:
+                  <span class="text-primary">#{{ dataItem._id }}</span>
+                </p>
+                <p>
+                  FROM:
+                  <span class="text-primary">{{
+                    getProvince(dataItem.trip?.from)
+                  }}</span>
+                </p>
+                <p>
+                  TO:
+                  <span class="text-primary">{{
+                    getToProvince(dataItem.trip?.to)
+                  }}</span>
+                </p>
+                <p class="mb-4">
+                  Name:
+                  <span class="text-primary">{{ dataItem?.user.name }}</span>
+                </p>
+                <div class="table-responsive">
+                  <table class="table table-centered table-nowrap">
+                    <thead>
+                      <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">Seat Name</th>
+                        <th scope="col">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let product of dataItem.seat; let i = index">
+                        <th scope="row">{{ i + 1 }}</th>
+                        <td>
+                          <div>
+                            <h5 class="text-truncate font-size-14">
+                              {{ product.sku }}
+                            </h5>
+                          </div>
+                        </td>
+                        <td>
+                          {{
+                            product.type === "VIP"
+                              ? dataItem.trip.price * 1.2
+                              : dataItem.trip.price
+                          }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">
+                          <h6 class="m-0 text-end">Total:</h6>
+                        </td>
+                        <td>
+                          {{ dataItem.amountPaid | currency : "" : "" : "1.0" }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  class="btn btn-secondary"
+                  (click)="modal.close('Close click')"
+                >
+                  Close
+                </button>
+              </div>
+            </ng-template>
+            <ng-template #contentdelete role="document" let-modal>
+              <div class="modal-header">
+                <h5 class="modal-title mt-0">CONFIRMATION</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  aria-hidden="true"
+                  (click)="modal.dismiss('Cross click')"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <h5>Do you really want to delete?</h5>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-light"
+                  (click)="modal.close('Close click')"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="deleteTicket()"
+                >
+                  OK
+                </button>
+              </div>
+            </ng-template>
+          </div>
+          <!-- end table -->
+          <ngb-pagination
+            [collectionSize]="totalPage"
+            [pageSize]="10"
+            [(page)]="currentpage"
+            (pageChange)="getPageTicket($event)"
+            class="pagination pagination-rounded justify-content-end mb-2"
+            aria-label="Default pagination"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

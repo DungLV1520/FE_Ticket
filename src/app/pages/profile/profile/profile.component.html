@@ -1,0 +1,154 @@
+<app-loader *ngIf="loading"></app-loader>
+<div class="container-fluid">
+  <app-page-title
+    title="Profile"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-page-title>
+
+  <div
+    class="row"
+    style="display: flex; justify-content: center; align-items: center"
+  >
+    <div class="col-xl-8">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-4">Profile Setting</h4>
+
+            <form (ngSubmit)="submitProfile()" [formGroup]="FormProfile">
+              <div class="row mb-4">
+                <label
+                  for="horizontal-firstname-input"
+                  class="col-sm-3 col-form-label"
+                  >Name</label
+                >
+                <div class="col-sm-9">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter your name"
+                    id="horizontal-firstname-input"
+                    formControlName="name"
+                  />
+                </div>
+              </div>
+              <div class="row justify-content-end">
+                <div class="col-sm-9">
+                  <div>
+                    <button
+                      [disabled]="!FormProfile.valid"
+                      type="submit"
+                      class="btn btn-primary w-md"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-4">Change Password</h4>
+            <form (ngSubmit)="typeSubmit()" [formGroup]="FormPassword">
+              <div class="row mb-4">
+                <label
+                  for="horizontal-email-input"
+                  class="col-sm-3 col-form-label"
+                  >Current password</label
+                >
+                <div class="col-sm-9">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="horizontal-email-input"
+                    autocomplete="current-password"
+                    placeholder="Current Password"
+                    formControlName="oldPassword"
+                  />
+                </div>
+              </div>
+              <div class="row mb-4">
+                <label
+                  for="horizontal-firstname-input"
+                  class="col-sm-3 col-form-label"
+                  >New password</label
+                >
+                <div class="col-sm-9">
+                  <input
+                    type="password"
+                    class="form-control"
+                    placeholder="New Password"
+                    autocomplete="new-password"
+                    formControlName="newPassword"
+                    [ngClass]="{
+                      'is-invalid': typesubmit && type.password?.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="typesubmit && type.password?.errors"
+                    class="invalid-feedback"
+                  >
+                    <span *ngIf="type.password?.errors.required"
+                      >This value is required.</span
+                    >
+                    <span *ngIf="type.password?.errors.minlength"
+                      >Password must be at least 6 characters.</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-4">
+                <label
+                  for="horizontal-email-input"
+                  class="col-sm-3 col-form-label"
+                  >Confirm password</label
+                >
+                <div class="col-sm-9">
+                  <input
+                    type="password"
+                    class="form-control"
+                    placeholder="Re-Type Password"
+                    formControlName="confirmpwd"
+                    [ngClass]="{
+                      'is-invalid': typesubmit1 && type?.confirmpwd.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="typesubmit1 && type.confirmpwd?.errors"
+                    class="invalid-feedback"
+                  >
+                    <span *ngIf="type.confirmpwd?.errors.required"
+                      >This value is required.</span
+                    >
+                    <span *ngIf="type.confirmpwd?.errors.mustMatch"
+                      >This value should be the same.</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-end">
+                <div class="col-sm-9">
+                  <div>
+                    <button
+                      type="submit"
+                      class="btn btn-primary w-md"
+                      [disabled]="!FormPassword.valid"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+</div>

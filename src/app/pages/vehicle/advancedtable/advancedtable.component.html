@@ -1,0 +1,443 @@
+<app-loader *ngIf="loading"></app-loader>
+<div class="container-fluid" style="position: relative">
+  <app-page-title
+    title="Vehicle"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-page-title>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- Search -->
+          <form [formGroup]="formSearch" style="width: 100%">
+            <div class="row">
+              <div
+                id="tickets-table_filter"
+                class="dataTables_filter text-md-end col-6"
+              >
+                <label
+                  class="d-inline-flex align-items-center"
+                  style="float: left"
+                >
+                  <div class="position-relative">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Search..."
+                      formControlName="name"
+                      (keyup)="searchVehicle()"
+                    />
+                    <i
+                      class="bx bx-search-alt search-icon"
+                      style="
+                        position: absolute;
+                        top: 0;
+                        right: 8px;
+                        transform: translateY(11px);
+                      "
+                    ></i>
+                  </div>
+                </label>
+              </div>
+              <div class="col-6">
+                <div class="row">
+                  <div class="text-sm-end col-9">
+                    <button
+                      type="button"
+                      class="btn btn-success btn-rounded mb-2"
+                      (click)="openModal(content, false)"
+                    >
+                      <i class="mdi mdi-plus me-1"></i> New Vehicle
+                    </button>
+                  </div>
+                  <div class="text-sm-end col-3">
+                    <button
+                      type="button"
+                      class="btn btn-success btn-rounded mb-2"
+                      (click)="openModalSeat(contentSeat, false)"
+                    >
+                      <i class="mdi mdi-plus me-1"></i> New Seat
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <!-- Table -->
+          <div class="table-responsive">
+            <table
+              id="basic-datatable"
+              class="table table-bordered dt-responsive nowrap no-footer dtr-inline"
+            >
+              <thead>
+                <tr>
+                  <th></th>
+                  <th sortable="name" (sort)="onSort($event)">Name</th>
+                  <th sortable="office" (sort)="onSort($event)">Company</th>
+                  <th sortable="age" (sort)="onSort($event)">Seat Capacity</th>
+                  <th sortable="date" (sort)="onSort($event)">Received at</th>
+                  <th sortable="salary" (sort)="onSort($event)">Modified at</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let table of tableData; let i = index">
+                <tr>
+                  <td align="center">
+                    <a class="expand-row" (click)="changeValue(i, table._id)">
+                      +
+                    </a>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="table.name"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight
+                      [result]="table.company?.name"
+                    ></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight
+                      [result]="table.guestCapacity"
+                    ></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight
+                      [result]="table.createdAt | date : 'dd MMM, YYYY'"
+                    ></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight
+                      [result]="table.updatedAt | date : 'dd MMM, YYYY'"
+                    ></ngb-highlight>
+                  </td>
+                  <td>
+                    <div ngbDropdown placement="bottom-left">
+                      <i
+                        class="mdi mdi-dots-vertical dropdown-toggle"
+                        ngbDropdownToggle
+                        data-toggle="dropdown"
+                        aria-expanded="true"
+                      ></i>
+                      <div
+                        class="dropdown-menu dropdown-menu-end"
+                        ngbDropdownMenu
+                      >
+                        <a
+                          class="dropdown-item"
+                          (click)="openModalSeat(contentSeat, false, table)"
+                          ><i class="mdi mdi-plus"></i>Add Seat</a
+                        >
+                        <a
+                          (click)="openModal(content, true, table)"
+                          class="dropdown-item"
+                          ><i class="mdi mdi-account-edit"></i>Edit</a
+                        >
+                        <a
+                          class="dropdown-item"
+                          (click)="
+                            openModalDelete(contentdelete, table._id, 'Vehicle')
+                          "
+                          ><i class="mdi mdi-delete"></i>Delete</a
+                        >
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr *ngIf="hideme[i]" class="sub-table no-bg">
+                  <td align="center"></td>
+                  <td colspan="15" class="p-0">
+                    <table class="table mb-0 table-striped">
+                      <thead class="bg-dark text-white">
+                        <tr>
+                          <th>Name Seat</th>
+                          <th>Type</th>
+                          <th>Status</th>
+                          <th>Created Date</th>
+                          <th>Last Modified</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let table of editableTable[i]?.seat;
+                            let i = index
+                          "
+                        >
+                          <td>{{ table.sku }}</td>
+                          <td>{{ table.type }}</td>
+                          <td>
+                            <span
+                              class="badge"
+                              [ngClass]="{
+                                'bg-success': table.status === true,
+                                'bg-danger': table.status === false
+                              }"
+                              >{{ table.status ? "Booked" : "Empty" }}</span
+                            >
+                          </td>
+                          <td>{{ table.createdAt | date : "dd MMM, YYYY" }}</td>
+                          <td>{{ table.updatedAt | date : "dd MMM, YYYY" }}</td>
+                          <td>
+                            <div ngbDropdown placement="bottom-left">
+                              <i
+                                class="mdi mdi-dots-vertical dropdown-toggle"
+                                ngbDropdownToggle
+                                data-toggle="dropdown"
+                                aria-expanded="true"
+                              ></i>
+                              <div
+                                class="dropdown-menu dropdown-menu-end"
+                                ngbDropdownMenu
+                              >
+                                <a
+                                  (click)="
+                                    openModalSeat(contentSeat, true, table)
+                                  "
+                                  class="dropdown-item"
+                                  ><i class="mdi mdi-account-edit"></i>Edit</a
+                                >
+                                <a
+                                  class="dropdown-item"
+                                  (click)="
+                                    openModalDelete(
+                                      contentdelete,
+                                      table._id,
+                                      'Seat'
+                                    )
+                                  "
+                                  ><i class="mdi mdi-delete"></i>Delete</a
+                                >
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- End table -->
+          <div>
+            <div class="pagination pagination-rounded justify-content-end mb-2">
+              <ngb-pagination
+                [collectionSize]="totalPage"
+                [(page)]="currentpage"
+                [pageSize]="10"
+                (pageChange)="getPageVehicle($event)"
+              >
+              </ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #content role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">{{ title }}</h5>
+      <button
+        type="button"
+        class="btn-close"
+        aria-hidden="true"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="saveCustomer()" [formGroup]="formData">
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="control-label">Vehicle Name</label>
+              <input
+                class="form-control"
+                placeholder="Enter vehicle name"
+                type="text"
+                autocomplete="off"
+                name="Price"
+                formControlName="name"
+                [ngClass]="{
+                  'is-invalid': submitted && form.name.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && form.name.errors"
+                class="invalid-feedback"
+              >
+                <span *ngIf="form.name.errors.required"
+                  >Vehicle Name is required.</span
+                >
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="control-label">Company</label>
+              <ng-select
+                [items]="companyItem"
+                bindLabel="name"
+                bindValue="_id"
+                formControlName="company"
+                placeholder="Enter company"
+                [ngClass]="{ 'is-invalid': submitted && form.company.errors }"
+                [readonly]="disableCpn"
+              ></ng-select>
+              <div
+                *ngIf="submitted && form.company.errors"
+                class="invalid-feedback"
+              >
+                <span *ngIf="form.company.errors.required"
+                  >Vehicle is required.</span
+                >
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="control-label">Guest Capacity</label>
+              <input
+                class="form-control"
+                placeholder="Enter guest capacity"
+                type="number"
+                autocomplete="off"
+                name="guestCapacity"
+                formControlName="guestCapacity"
+                [ngClass]="{
+                  'is-invalid': submitted && form.guestCapacity.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && form.guestCapacity.errors"
+                class="invalid-feedback"
+              >
+                <span *ngIf="form.guestCapacity.errors.required"
+                  >Guest Capacity is required.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success" id="btn-save-event">
+          Save
+        </button>
+      </form>
+    </div>
+  </ng-template>
+  <ng-template #contentSeat role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">{{ titleSeat }}</h5>
+      <button
+        type="button"
+        class="btn-close"
+        aria-hidden="true"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="saveSeats()" [formGroup]="formSeat">
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="control-label">Seat Name</label>
+              <input
+                class="form-control"
+                placeholder="Enter seat name"
+                type="text"
+                autocomplete="off"
+                name="Price"
+                formControlName="sku"
+                [ngClass]="{
+                  'is-invalid': submitted && formSeats.sku.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && formSeats.sku.errors"
+                class="invalid-feedback"
+              >
+                <span *ngIf="formSeats.sku.errors.required"
+                  >Seat Name is required.</span
+                >
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="control-label">Vehicle</label>
+              <ng-select
+                [items]="tableData"
+                bindLabel="name"
+                bindValue="_id"
+                [readonly]="disableUpdate"
+                formControlName="vehicle"
+                placeholder="Enter vehicle"
+                [ngClass]="{
+                  'is-invalid': submitted && formSeats.vehicle.errors
+                }"
+              ></ng-select>
+              <div
+                *ngIf="submitted && formSeats.vehicle.errors"
+                class="invalid-feedback"
+              >
+                <span *ngIf="formSeats.vehicle.errors.required"
+                  >Vehicle is required.</span
+                >
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="control-label">Type</label>
+              <ng-select
+                [items]="typeSeat"
+                bindLabel="type"
+                bindValue="type"
+                formControlName="type"
+                placeholder="Enter type"
+                [ngClass]="{ 'is-invalid': submitted && formSeats.type.errors }"
+              ></ng-select>
+              <div
+                *ngIf="submitted && formSeats.type.errors"
+                class="invalid-feedback"
+              >
+                <span *ngIf="formSeats.type.errors.required"
+                  >Type is required.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          [disabled]="!formSeat.valid"
+          class="btn btn-success"
+          id="btn-save-event"
+        >
+          Save
+        </button>
+      </form>
+    </div>
+  </ng-template>
+
+  <!-- Standard Modal -->
+  <ng-template #contentdelete role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">CONFIRMATION</h5>
+      <button
+        type="button"
+        class="btn-close"
+        aria-hidden="true"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <h5>Do you really want to delete</h5>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-light"
+        (click)="modal.close('Close click')"
+      >
+        Cancel
+      </button>
+      <button (click)="deleteVehicle()" ype="button" class="btn btn-primary">
+        OK
+      </button>
+    </div>
+  </ng-template>
+</div>

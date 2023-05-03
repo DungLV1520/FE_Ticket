@@ -1,0 +1,198 @@
+<header id="page-topbar">
+  <div class="navbar-header">
+    <div class="d-flex">
+      <div
+        *ngIf="!checkLogoText"
+        routerLink="/"
+        class="navbar-brand-box pt-4"
+        style="font-size: 19px; color: white; padding-left: 5px"
+      >
+        <i class="bx bxs-bot mx-1"></i>BOOKING
+      </div>
+      <div
+        *ngIf="checkLogoText"
+        routerLink="/"
+        class="navbar-brand-box pt-4"
+        style="font-size: 19px; color: white"
+      >
+        <i class="bx bxs-bot"></i>
+      </div>
+      <button
+        type="button"
+        class="btn btn-sm px-3 font-size-16 header-item"
+        id="vertical-menu-btn"
+        (click)="toggleMobileMenu($event)"
+      >
+        <i class="fa fa-fw fa-bars"></i>
+      </button>
+    </div>
+
+    <div class="d-flex">
+      <div class="dropdown d-inline-block d-lg-none ms-2" ngbDropdown>
+        <button
+          type="button"
+          class="btn header-item noti-icon"
+          id="page-header-search-dropdown"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          ngbDropdownToggle
+          aria-expanded="false"
+        >
+          <i class="mdi mdi-magnify"></i>
+        </button>
+        <div
+          class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+          ngbDropdownMenu
+          aria-labelledby="page-header-search-dropdown"
+        >
+          <form class="p-3">
+            <div class="m-0">
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search ..."
+                  aria-label="Recipient's username"
+                />
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit">
+                    <i class="mdi mdi-magnify"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="dropdown d-inline-block" ngbDropdown>
+        <button
+          type="button"
+          class="btn header-item"
+          id="page-header-user-dropdown"
+          ngbDropdownToggle
+        >
+          <img
+            *ngIf="flagvalue !== undefined"
+            src="{{ flagvalue }}"
+            alt="Header Language"
+            height="16"
+          />
+          <span class="ms-1">{{ countryName }}</span>
+          <img
+            *ngIf="flagvalue === undefined"
+            src="{{ valueset }}"
+            alt="Header Language"
+            height="16"
+          />
+          <span *ngIf="flagvalue === undefined" class="ms-1">English</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+          <!-- item-->
+          <a
+            href="javascript:void(0);"
+            class="dropdown-item notify-item"
+            *ngFor="let item of listLang"
+            (click)="setLanguage(item.text, item.lang, item.flag)"
+            [ngClass]="{ active: cookieValue === item.lang }"
+          >
+            <img
+              src="{{ item.flag }}"
+              alt="user-image"
+              class="me-1"
+              height="12"
+            />
+            <span class="align-middle">{{ item.text }}</span>
+          </a>
+          <!-- item-->
+        </div>
+      </div>
+
+      <div class="dropdown d-none d-lg-inline-block ms-1" ngbDropdown>
+        <button
+          type="button"
+          class="btn header-item noti-icon"
+          ngbDropdownToggle
+        >
+          <i class="bx bx-customize"></i>
+        </button>
+        <div
+          class="dropdown-menu dropdown-menu-sm dropdown-menu-end"
+          ngbDropdownMenu
+        >
+          <div class="px-sm-2">
+            <div class="row no-gutters">
+              <div class="col">
+                <a class="dropdown-icon-item" routerLink="/crypto-ico-landing">
+                  <img src="assets/images/brands/slack.png" alt="slack" />
+                  <span>Booking USER</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dropdown d-inline-block" ngbDropdown>
+        <button
+          type="button"
+          class="btn header-item"
+          ngbDropdownToggle
+          id="page-header-user-dropdown"
+        >
+          <svg
+            width="21"
+            height="21"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style="margin-top: -4px"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M2.1508 14.6667L2.16247 14.6691C3.66318 15.5923 5.87369 16 8.54013 16C13.6386 16 16.06 13.1326 15.9989 10.2963L15.9988 10.2965C15.9915 9.9837 15.9544 9.67216 15.8881 9.36558C15.2134 6.26284 13.2593 4.74436 13.2593 4.74436L12.5846 0L9.01243 2.78378C9.01243 2.78378 1.59703 1.64521 0.11395 9.48867C-0.312515 11.9558 0.478038 13.6332 2.1508 14.6667ZM9.48517 5.4169C9.67199 5.32541 9.83074 5.24766 9.95964 5.21389C13.1957 4.3704 14.4547 7.40864 13.6005 9.47435C12.7463 11.5401 9.9596 10.865 9.46566 10.5281C8.97172 10.1912 7.80313 9.72764 6.90437 10.3178C6.0056 10.908 2.14062 11.6679 2.14062 8.5042C2.14062 5.34053 4.83694 4.6667 6.49952 5.55201C7.79771 6.24327 8.8196 5.74284 9.48517 5.4169Z"
+              fill="#ED1C24"
+            />
+            <path
+              d="M4.59385 8.90929C5.06421 8.90929 5.44551 8.3899 5.44551 7.7492C5.44551 7.1085 5.06421 6.58911 4.59385 6.58911C4.12349 6.58911 3.74219 7.1085 3.74219 7.7492C3.74219 8.3899 4.12349 8.90929 4.59385 8.90929Z"
+              fill="#ED1C24"
+            />
+            <path
+              d="M11.295 8.90929C11.7654 8.90929 12.1467 8.3899 12.1467 7.7492C12.1467 7.1085 11.7654 6.58911 11.295 6.58911C10.8247 6.58911 10.4434 7.1085 10.4434 7.7492C10.4434 8.3899 10.8247 8.90929 11.295 8.90929Z"
+              fill="#ED1C24"
+            />
+          </svg>
+
+          <span class="d-none d-xl-inline-block ms-1">{{ account?.name }}</span>
+          <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+          <a class="dropdown-item" routerLink="/contacts/profile"
+            ><i class="bx bx-user font-size-16 align-middle me-1"></i>
+            {{ "HEADER.LOGIN.PROFILE" | translate }}</a
+          >
+          <a
+            class="dropdown-item text-danger"
+            href="javascript: void(0);"
+            (click)="logout()"
+            ><i
+              class="bx bx-power-off font-size-16 align-middle me-1 text-danger"
+            ></i>
+            {{ "HEADER.LOGIN.LOGOUT" | translate }}</a
+          >
+        </div>
+      </div>
+
+      <div class="dropdown d-inline-block">
+        <button
+          type="button"
+          class="btn header-item noti-icon right-bar-toggle"
+          (click)="toggleRightSidebar()"
+        >
+          <i class="bx bx-cog bx-spin"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
